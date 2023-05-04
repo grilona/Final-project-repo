@@ -35,6 +35,6 @@ def extract():
     f.close()
 
 
-class datasetAutomation:
+class DatasetAutomation:
     def __init__(self):
         extract()
