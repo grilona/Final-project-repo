@@ -9,7 +9,7 @@ def extract():
     with open("data.csv", mode="a") as f:
         writer = csv.writer(f)
 
-        tls = (len(data['network']['tls']))
+        tls = ( len(data['network']['tls']))
         udp = (len(data['network']['udp']))
         dns_servers = (len(data['network']['dns_servers']))
         http = (len(data['network']['http']))
