@@ -2,6 +2,8 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
+import torch.nn as nn
+import torch.nn.functional as F
 
 # Get cpu, gpu or mps device for training.
 device = (
@@ -11,7 +13,7 @@ device = (
     if torch.backends.mps.is_available()
     else "cpu"
 )
-print(f"Using {device} device")
+# print(f"Using {device} device")
 
 
 class CustomDataset(Dataset):
@@ -25,6 +27,20 @@ class CustomDataset(Dataset):
         x = self.data.iloc[index, :-1].values.astype('float32')
         y = self.data.iloc[index, -1:].values.astype('float32')
         return torch.from_numpy(x), torch.from_numpy(y)
+
+
+class MyModel(nn.Module):
+    def __init__(self):
+        super(MyModel, self).__init__()
+        self.fc1 = nn.Linear(58, 10)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(10, 1)
+
+    def forward(self, x):
+        out = self.fc1(x)
+        out = self.relu(out)
+        out = self.fc2(out)
+        return out
 
 
 def train(dataloader, loss_fn, model, optimizer):
@@ -43,11 +59,11 @@ def train(dataloader, loss_fn, model, optimizer):
 
 
 def saving_model(model):
-    torch.save(model.state_dict(), "model.pth")
+    torch.save({'model_state_dict': model.state_dict()}, 'model.pth')
     print("Saved PyTorch Model State to model.pth")
 
 
-def main():
+def pytorchnn():
 
     # Load the CSV file
     csv_file = 'pytorchnn\dataset.csv'
@@ -59,14 +75,10 @@ def main():
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
     # Define a simple model
-    model = torch.nn.Sequential(
-        torch.nn.Linear(58, 10),
-        torch.nn.ReLU(),
-        torch.nn.Linear(10, 1),
-    )
+    model = MyModel()
 
     # Define a loss function
-    loss_fn = torch.nn.MSELoss()
+    loss_fn = nn.BCEWithLogitsLoss()
 
     # Define an optimizer
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
@@ -75,6 +87,3 @@ def main():
     train(dataloader, loss_fn, model, optimizer)
 
     saving_model(model)
-
-if __name__ == '__main__':
-    main()
