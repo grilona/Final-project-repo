@@ -3,7 +3,6 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 import torch.nn as nn
-import torch.nn.functional as F
 
 # Get cpu, gpu or mps device for training.
 device = (
@@ -15,41 +14,75 @@ device = (
 )
 # print(f"Using {device} device")
 
-
-class CustomDataset(Dataset):
-    def __init__(self, csv_file):
-        self.data = pd.read_csv(csv_file)
+# Define a custom dataset
+class MyDataset(Dataset):
+    def __init__(self, features, labels, transform=None):
+        self.features = features
+        self.labels = labels
+        self.transform = transform
 
     def __len__(self):
-        return len(self.data)
+        return len(self.features)
 
-    def __getitem__(self, index):
-        x = self.data.iloc[index, :-1].values.astype('float32')
-        y = self.data.iloc[index, -1:].values.astype('float32')
-        return torch.from_numpy(x), torch.from_numpy(y)
+    def __getitem__(self, idx):
+        x = self.features[idx]
+        y = self.labels[idx]
+        if self.transform:
+            x = self.transform(x)
+        return x, y
 
+class Normalize:
+    def __init__(self, mean, std):
+        self.mean = mean
+        self.std = std
+
+    def __call__(self, x):
+        x = (x - self.mean) / (self.std + 1e-8)
+        return x
+
+
+# class CustomDataset(Dataset):
+#     def __init__(self, csv_file):
+#         self.data = pd.read_csv(csv_file)
+#
+#     def __len__(self):
+#         return len(self.data)
+#
+#     def __getitem__(self, index):
+#         x = self.data.iloc[index, :-1].values.astype('float32')
+#         y = self.data.iloc[index, -1:].values.astype('float32')
+#         return torch.from_numpy(x), torch.from_numpy(y)
+#
 
 class MyModel(nn.Module):
     def __init__(self):
         super(MyModel, self).__init__()
-        self.fc1 = nn.Linear(58, 10)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(10, 1)
+        self.fc1 = nn.Linear(57, 128)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 11)
+        # self.relu = nn.ReLU()
+        self.leakyrelu = nn.LeakyReLU(0.1)
+        self.dropout = nn.Dropout(p=0.2)
+
 
     def forward(self, x):
-        out = self.fc1(x)
-        out = self.relu(out)
-        out = self.fc2(out)
-        return out
+        x = self.fc1(x)
+        x = self.leakyrelu(x)
+        x = self.dropout(x)
+        x = self.leakyrelu(self.fc2(x))
+        x = self.dropout(x)
+        x = self.fc3(x)
+        return x
 
 
-def train(dataloader, loss_fn, model, optimizer):
+def train(dataloader, loss_fn,  model, optimizer):
     num_epochs = 10
     for epoch in range(num_epochs):
         for batch in dataloader:
             x_batch, y_batch = batch
             # Forward pass
             y_pred = model(x_batch)
+            # y_batch = torch.argmax(y_batch, dim=0)
             loss = loss_fn(y_pred, y_batch)
             # Backward pass
             optimizer.zero_grad()
@@ -64,21 +97,42 @@ def saving_model(model):
 
 
 def pytorchnn():
-
     # Load the CSV file
     csv_file = 'pytorchnn\dataset.csv'
     # Create an instance of the CustomDataset
-    dataset = CustomDataset(csv_file)
+    # dataset = CustomDataset(csv_file)
+    # --------
+    # Load the CSV file into a Pandas dataframe
+    data_df = pd.read_csv(csv_file)
 
+    # Extract the features and labels
+    features = data_df.iloc[:, :-1].values
+    labels = data_df.iloc[:, -1].values
+
+    # Convert the features and labels to PyTorch tensors
+    features = torch.tensor(features).float()
+    labels = torch.tensor(labels).long()
+
+    # Calculate the mean and standard deviation of the features
+    mean = torch.mean(features, dim=0)
+    std = torch.std(features, dim=0)
+
+    # Define the normalization transform
+    normalize_transform = Normalize(mean=mean, std=std)
+
+    # --------
     # Create a DataLoader to load the dataset in batches
-    batch_size = 32
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    batch_size = 10
+    # Create a DataLoader with the normalized dataset
+    normalized_dataset = MyDataset(features, labels, transform=normalize_transform)
+    dataloader = DataLoader(normalized_dataset, batch_size, shuffle=True)
+    # dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
     # Define a simple model
     model = MyModel()
 
     # Define a loss function
-    loss_fn = nn.BCEWithLogitsLoss()
+    loss_fn = nn.CrossEntropyLoss()
 
     # Define an optimizer
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01)

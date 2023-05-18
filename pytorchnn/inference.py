@@ -8,7 +8,7 @@ def main_inference():
     model = MyModel()
     state_dict = torch.load('model.pth', map_location=torch.device('cpu'))
     model.load_state_dict(state_dict['model_state_dict'])
-
+    model.eval()
     # Load the input data from a CSV file
     input_data = pd.read_csv('pytorchnn/putty.csv')
 
@@ -23,7 +23,9 @@ def main_inference():
     y_pred = y_pred.numpy()
 
     # Print the predictions
-    print(y_pred)
+    pred_tensor = torch.from_numpy(y_pred)
+
+    print(torch.argmax(pred_tensor, dim=1))
 
 
     # Define a function to preprocess the input data
