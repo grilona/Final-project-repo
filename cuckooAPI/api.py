@@ -2,7 +2,7 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-@app.route('/upload', methods=['POST'])
+@app.route('/api/uploadfile', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
         return 'No file found in the request!', 400
