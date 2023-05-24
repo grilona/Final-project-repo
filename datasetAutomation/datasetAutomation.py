@@ -2,14 +2,14 @@ import simplejson as json
 import csv
 
 
-def extract():
-    with open("datasetAutomation/Ransomware.Cerber.json") as f:
+def extract(file_path_json, file_path_csv):
+    with open(file_path_json) as f:
         data = json.load(f)
 
-    with open("data.csv", mode="a") as f:
+    with open(file_path_csv, mode="a") as f:
         writer = csv.writer(f)
 
-        tls = ( len(data['network']['tls']))
+        tls = (len(data['network']['tls']))
         udp = (len(data['network']['udp']))
         dns_servers = (len(data['network']['dns_servers']))
         http = (len(data['network']['http']))
@@ -33,7 +33,7 @@ def extract():
 
     # Closing file
     f.close()
-
+    print("CSV file saved successfully.")
 
 class DatasetAutomation:
     def __init__(self):

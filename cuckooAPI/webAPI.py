@@ -26,11 +26,11 @@ def saveFileExe(file):
     file.save(file_path)
 
 
-
 def sendToCuckoo(file_path):
     # while not os.path.isfile(file_path):
     #     time.sleep(1)  # Wait for 1 second before checking again
     getByIdJson(postFile(file_path), directory)
+
 
 if __name__ == '__main__':
     file_name = "malclass.exe"

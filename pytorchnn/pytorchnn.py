@@ -40,20 +40,6 @@ class Normalize:
         x = (x - self.mean) / (self.std + 1e-8)
         return x
 
-
-# class CustomDataset(Dataset):
-#     def __init__(self, csv_file):
-#         self.data = pd.read_csv(csv_file)
-#
-#     def __len__(self):
-#         return len(self.data)
-#
-#     def __getitem__(self, index):
-#         x = self.data.iloc[index, :-1].values.astype('float32')
-#         y = self.data.iloc[index, -1:].values.astype('float32')
-#         return torch.from_numpy(x), torch.from_numpy(y)
-#
-
 class MyModel(nn.Module):
     def __init__(self):
         super(MyModel, self).__init__()
