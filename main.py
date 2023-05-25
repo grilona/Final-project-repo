@@ -31,6 +31,8 @@ def main():
     sendToCuckoo()
     extractFromJsonToCSV()
     answer = getAnswer(main_inference(file_path_csv))
+    deleteExe()
+    deleteJSON()
     deleteCSV()
     return answer, 200
 
@@ -47,6 +49,24 @@ def extractFromJsonToCSV():
     extract(file_path_json,file_path_csv)
 
 
+def deleteExe():
+    try:
+        os.remove(file_path_exe)
+        print("exe file deleted successfully.")
+    except FileNotFoundError:
+        print("The specified exe file does not exist.")
+    except Exception as e:
+        print("An error occurred while deleting the exe file:", str(e))
+
+def deleteJSON():
+    try:
+        os.remove(file_path_json)
+        print("json file deleted successfully.")
+    except FileNotFoundError:
+        print("The specified json file does not exist.")
+    except Exception as e:
+        print("An error occurred while deleting the json file:", str(e))
+
 def deleteCSV():
     try:
         os.remove(file_path_csv)
@@ -55,7 +75,6 @@ def deleteCSV():
         print("The specified CSV file does not exist.")
     except Exception as e:
         print("An error occurred while deleting the CSV file:", str(e))
-
 
 def getAnswer(inference_answer):
     answer = inference_answer.item()
