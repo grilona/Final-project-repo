@@ -23,8 +23,8 @@ def getByIdJson(id, file_path):
         response_json = r.json()
 
         if response_json:
-            out_file = open(file_path, "w")
-            json.dump(response_json, out_file, indent=6)
+            with open(file_path, "w") as out_file:
+                json.dump(response_json, out_file, indent=6)
             out_file.close()
             print("JSON file saved successfully.")
         else:

@@ -6,7 +6,7 @@ from pytorchnn.pytorchnn import MyModel
 def main_inference(file_path_csv):
     # Load the saved model
     model = MyModel()
-    state_dict = torch.load('model.pth', map_location=torch.device('cpu'))
+    state_dict = torch.load('pytorchnn/model.pth', map_location=torch.device('cpu'))
     model.load_state_dict(state_dict['model_state_dict'])
     model.eval()
     # Load the input data from a CSV file
@@ -26,6 +26,7 @@ def main_inference(file_path_csv):
     pred_tensor = torch.from_numpy(y_pred)
 
     print(torch.argmax(pred_tensor, dim=1))
+    return torch.argmax(pred_tensor, dim=1)
 
 
     # Define a function to preprocess the input data

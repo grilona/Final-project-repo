@@ -9,7 +9,7 @@ device = (
     "cuda"
     if torch.cuda.is_available()
     else "mps"
-    if torch.backends.mps.is_available()
+    if hasattr(torch.backends, "mps") and torch.backends.mps.is_available()
     else "cpu"
 )
 # print(f"Using {device} device")
@@ -43,9 +43,9 @@ class Normalize:
 class MyModel(nn.Module):
     def __init__(self):
         super(MyModel, self).__init__()
-        self.fc1 = nn.Linear(57, 128)
+        self.fc1 = nn.Linear(56, 128)
         self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, 11)
+        self.fc3 = nn.Linear(64, 7)
         # self.relu = nn.ReLU()
         self.leakyrelu = nn.LeakyReLU(0.1)
         self.dropout = nn.Dropout(p=0.2)
@@ -84,9 +84,8 @@ def saving_model(model):
 
 def pytorchnn():
     # Load the CSV file
-    csv_file = 'pytorchnn\dataset.csv'
+    csv_file = '/home/ubuntu/Documents/Final-project-repo/pytorchnn/dataset.csv'
     # Create an instance of the CustomDataset
-    # dataset = CustomDataset(csv_file)
     # --------
     # Load the CSV file into a Pandas dataframe
     data_df = pd.read_csv(csv_file)
