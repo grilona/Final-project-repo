@@ -73,3 +73,63 @@ def extract():
         icmp = (len(data['network']['icmp']))
         http_ex = (len(data['network']['http_ex']))
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        writer.writerow(["score","recon_fingerprint","pe_features", "js_eval","creates_exe","exe_appdata", "stealth_window",
+                         "deletes_executed_files", "dropper",  "modify_uac_prompt", "process_martian", "injection_resumethread",
+                         "suspicious_write_exe", "antivm_queries_computername","console_output", "antivm_memory_available",
+                         "raises_exception", "dumped_buffer","p2p_cnc,allocates_rwx","antivm_disk_size","creates_doc",
+                         "suspicious_process","has_wmi,moves_self","antivm_network_adapters","privilege_luid_check",
+                         "terminates_remote_process","uses_windows_utilities", "nolookup_communication","bypass_firewall",
+                         "antisandbox_cuckoo_files","disables_proxy","modifies_proxy_wpad","ransomware_message",
+                          "protection_rx","persistence_autorun", "peid_packer","antisandbox_foregroundwindows","creates_shortcut",
+                         "imported_dll_count","tls","udp", 'dns_servers', 'http', "irc", "smtp", 'tcp', "smtp_ex", 'mitm', "hosts", "dns",
+                         "domains",'dead_hosts', 'icmp', 'http_ex'
+                        ])
+        writer.writerow([score,recon_fingerprint,pe_features, js_eval,creates_exe,exe_appdata, stealth_window,
+                         deletes_executed_files, dropper,  modify_uac_prompt, process_martian, injection_resumethread,
+                         suspicious_write_exe, antivm_queries_computername,console_output, antivm_memory_available,
+                         raises_exception, dumped_buffer,p2p_cnc,allocates_rwx,antivm_disk_size,creates_doc,
+                         suspicious_process,has_wmi,moves_self,antivm_network_adapters,privilege_luid_check,
+                         terminates_remote_process,uses_windows_utilities, nolookup_communication,bypass_firewall,
+                         antisandbox_cuckoo_files,disables_proxy,modifies_proxy_wpad,ransomware_message,
+                          protection_rx,persistence_autorun, peid_packer,antisandbox_foregroundwindows,creates_shortcut,
+                         imported_dll_count,tls,udp, dns_servers, http, irc, smtp, tcp, smtp_ex, mitm, hosts, dns,
+                         domains,dead_hosts, icmp, http_ex
+                         ])
+
+    # Closing file
+    f.close()
+    print("CSV file saved successfully.")
+
+
+extract()
+
