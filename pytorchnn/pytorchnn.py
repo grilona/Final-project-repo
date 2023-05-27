@@ -45,7 +45,7 @@ class MyModel(nn.Module):
         super(MyModel, self).__init__()
         self.fc1 = nn.Linear(56, 128)
         self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, 7)
+        self.fc3 = nn.Linear(64, 8)
         # self.relu = nn.ReLU()
         self.leakyrelu = nn.LeakyReLU(0.1)
         self.dropout = nn.Dropout(p=0.2)
@@ -62,7 +62,7 @@ class MyModel(nn.Module):
 
 
 def train(dataloader, loss_fn,  model, optimizer):
-    num_epochs = 10
+    num_epochs = 30
     for epoch in range(num_epochs):
         for batch in dataloader:
             x_batch, y_batch = batch

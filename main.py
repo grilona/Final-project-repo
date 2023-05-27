@@ -1,30 +1,20 @@
-import json
-
-import torch
+import time
 from flask import Flask, request
+from flask_cors import CORS
+
 from cuckooAPI.cuckooAPI import postFile, getByIdJson
 from datasetAutomation.datasetAutomation import extract
 from pytorchnn.inference import main_inference
 import os
-from flask_socketio import SocketIO
-from flask_cors import CORS
-from flask import Flask, jsonify
+from flask import Flask
 
 app = Flask(__name__)
-
-CORS(app)  # Enable CORS for cross-origin requests
-
-# @app.route('/api/gettensor', methods=['GET'])
-# def get_tensor(argmax_value):
-#     tensor = torch.tensor([argmax_value])
-#     return tensor
-
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route('/api/uploadfile', methods=['POST'])
 def main():
     if 'file' not in request.files:
         return 'No file found in the request!', 400
-
     file = request.files['file']
     saveFileExe(file)
     print('Received file:', file.filename)
@@ -76,6 +66,7 @@ def deleteCSV():
     except Exception as e:
         print("An error occurred while deleting the CSV file:", str(e))
 
+
 def getAnswer(inference_answer):
     answer = inference_answer.item()
     if answer == 1:
@@ -96,6 +87,9 @@ def getAnswer(inference_answer):
     elif answer == 6:
         print("Case 6- Spyware")
         return "Spyware"
+    elif answer == 7:
+        print("Case 7- Virus")
+        return "Virus"
 
     else:
         print("Default case- Non-malware")
