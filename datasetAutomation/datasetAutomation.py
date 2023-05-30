@@ -105,4 +105,5 @@ def extract(file_path_json, file_path_csv):
 
     except Exception as e:
         print("An error occurred:", str(e))
-        time.sleep(10)
+        time.sleep(2)
+        extract(file_path_json, file_path_csv)

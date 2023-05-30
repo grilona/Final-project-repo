@@ -41,28 +41,43 @@ class Normalize:
         return x
 
 class MyModel(nn.Module):
+
     def __init__(self):
         super(MyModel, self).__init__()
         self.fc1 = nn.Linear(56, 128)
-        self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, 8)
-        # self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(128, 256)
+        self.fc3 = nn.Linear(256, 512)
+        self.fc4 = nn.Linear(512, 256)
+        self.fc5 = nn.Linear(256, 128)
+        self.fc6 = nn.Linear(128, 64)
+        self.fc7 = nn.Linear(64, 8)
         self.leakyrelu = nn.LeakyReLU(0.1)
         self.dropout = nn.Dropout(p=0.2)
-
 
     def forward(self, x):
         x = self.fc1(x)
         x = self.leakyrelu(x)
         x = self.dropout(x)
-        x = self.leakyrelu(self.fc2(x))
+        x = self.fc2(x)
+        x = self.leakyrelu(x)
         x = self.dropout(x)
         x = self.fc3(x)
+        x = self.leakyrelu(x)
+        x = self.dropout(x)
+        x = self.fc4(x)
+        x = self.leakyrelu(x)
+        x = self.dropout(x)
+        x = self.fc5(x)
+        x = self.leakyrelu(x)
+        x = self.dropout(x)
+        x = self.fc6(x)
+        x = self.leakyrelu(x)
+        x = self.dropout(x)
+        x = self.fc7(x)
         return x
 
-
 def train(dataloader, loss_fn,  model, optimizer):
-    num_epochs = 30
+    num_epochs = 20
     for epoch in range(num_epochs):
         for batch in dataloader:
             x_batch, y_batch = batch
@@ -84,7 +99,7 @@ def saving_model(model):
 
 def pytorchnn():
     # Load the CSV file
-    csv_file = '/home/ubuntu/Documents/Final-project-repo/pytorchnn/dataset.csv'
+    csv_file = '/home/ubuntu/Downloads/csv/malclass.csv'
     # Create an instance of the CustomDataset
     # --------
     # Load the CSV file into a Pandas dataframe
@@ -120,7 +135,7 @@ def pytorchnn():
     loss_fn = nn.CrossEntropyLoss()
 
     # Define an optimizer
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     # Train the model
     train(dataloader, loss_fn, model, optimizer)
